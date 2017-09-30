@@ -141,9 +141,9 @@ Blockly.Blocks['impress_image'] = {
         .appendField("链接")
         .appendField(new Blockly.FieldTextInput("https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png"), "src")
         .appendField("长")
-        .appendField(new Blockly.FieldNumber(0, 0), "width")
+        .appendField(new Blockly.FieldNumber(500, 0), "width")
         .appendField("宽")
-        .appendField(new Blockly.FieldNumber(0, 0), "height");
+        .appendField(new Blockly.FieldNumber(500, 0), "height");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(0);

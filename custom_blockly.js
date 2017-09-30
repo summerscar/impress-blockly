@@ -115,7 +115,7 @@ Blockly.JavaScript['impress_image'] = function(block) {
   // TODO: Assemble JavaScript into code variable.
   var code = 
   `
-  <img src="${text_src}" width="${number_width ? number_width : '' }" height="${number_height ?  number_height : '' }" alt="img">
+  <img src="${text_src}" width="${number_width}" height="${number_height}" alt="img">
   `;
   return code;
 };

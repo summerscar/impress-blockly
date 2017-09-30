@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+    <head>
+        <title>impress-blockly-demo</title>
+        <meta charset="utf-8" />
+        <link href="http://impress.github.io/impress.js/css/impress-demo.css" rel="stylesheet" />
+        <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+        <script src="./blockly_compressed.js"></script>
+        <script src="./blocks_compressed.js"></script>
+        <script src="./javascript_compressed.js"></script>
+        <script src="./custom_blocks.js"></script>
+        <script src="./custom_blockly.js"></script>
+        <script src="./msg/js/zh-hans.js"></script>
+        <style>
+            html,body {
+                height: 100%;
+                width: 100%
+            }
+            #slide {
+                height: 100%;
+                position: fixed;
+                width: 60%;
+                right: -60%;
+                top: 0;
+                background-color: #66ccff;
+                pointer-events: auto;
+            }
+            #slide div#pull {
+                position: absolute;
+                height: 160px;
+                width: 50px;
+                top: 50%;
+                display: flex;
+                flex-wrap: wrap;
+                align-content:space-around;
+                transform: translate(-100%,-50%)
+            }
+            #pull div {
+                opacity: 0.3;
+                color:white;
+                cursor: pointer;
+                margin: auto;
+                flex: auto;
+                height:40px;
+                text-align: center;
+                line-height: 40px;
+                border-bottom: 1px rgba(255, 255, 255, 0.5) solid;
+                background-color: #66ccff;
+                transition: all 0.4s;
+            }
+            #pull div:hover {
+                opacity: 1;
+            }
+            #pull div:nth-child(1) {
+                border-radius: 5px 0 0 0;
+            }
+            #pull div:nth-child(4) {
+                border-radius: 0 0 0 5px;
+                border: 0
+            }
+            #colorselect {
+                pointer-events: auto;
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+                z-index: 999
+            }
+            .goog-palette,.blocklyDropdownMenu{
+                pointer-events: auto;
+            }
+            footer{
+                position: fixed;
+                bottom: 8px;
+                right: 15px;
+                z-index: 999;
+                pointer-events: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="impress-not-supported">
+            <div class="fallback-message">
+                <p>你的浏览器<b>不支持</b> impress.js, 所以当前展示的是简化版。</p>
+                <p>为了获得更好的体验，请使用最新的 <b>Chrome</b>, <b>Safari</b> 或者 <b>Firefox</b> 浏览器。</p>
+            </div>
+        </div>
+        <div id="impress"></div>
+        <div class="hint">
+            <p>使用空格或者方向键来移动</p>
+        </div>
+        <div id="slide">
+            <div id="pull">
+                <div class="pull">
+                    拉出        
+                </div>
+                <div class="run" >
+                    运行        
+                </div>
+                <div class="export">
+                    导出        
+                </div>
+                <div class="import" >
+                    导入        
+                </div>
+            </div>
+        </div>
+        <footer>Github <a href="https://github.com/impress/impress.js">impress.js</a> <a href="https://developers.google.com/blockly/">blockly</a> <a href="https://github.com/summerscar">this is me</a></footer>
+        <div id="colorselect">
+            <!-- <label for="color1">color1</label> -->
+            <input type='color' id="color1" value="#F0F0F0"/>
+            <!-- <label for="color1">color2</label> -->
+            <input type='color' id="color2" value="#BEBEBE"/>
+        </div>
+    </body>
+    <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+        <category name="start" colour="#5ba580">
+          <block type="impress_start"></block>
+        </category>
+        <category name="step" colour="#5b6da5">
+          <block type="impress_step"></block>
+          <block type="impress_step_slide"></block>
+          <block type="impress_step_overview"></block>
+        </category>
+        <sep></sep>
+        <category name="行元素" colour="#a55b5b">
+            <block type="impress_block"></block>
+        </category>
+        <category name="行内元素" colour="#5ba5a5">
+            <block type="impress_inline"></block>
+            <block type="impress_image"></block>
+        </category>
+      </xml>
+    <script src="http://impress.github.io/impress.js/js/impress.js"></script>
+    <script>
+        let pulled = true
+        var timer = null;
+        let runed = false
+        let color1 = '#F0F0F0'
+        let color2 = '#BEBEBE'
+
+        //blockly初始化
+        var workspace = Blockly.inject('slide',{
+                toolbox: document.getElementById('toolbox'),
+                grid:
+                    {spacing: 20,
+                        length: 3,
+                        colour: '#ccc',
+                        snap: true},
+                zoom:
+                    {controls: true,
+                        startScale: 1.0,
+                        maxScale: 3,
+                        minScale: 0.3,
+                        scaleSpeed: 1.2},
+                trashcan: true});
+
+        //判断本地存储
+        if (localStorage.getItem("xml_text")) {
+            var xml_text = localStorage.getItem("xml_text")
+            var xml = Blockly.Xml.textToDom(xml_text);
+            Blockly.Xml.domToWorkspace(xml, workspace);
+            run()
+        } 
+        else {    //示例代码
+            var xml_text = '<xml xmlns="http://www.w3.org/1999/xhtml"><variables></variables><block type="impress_start" id="5DGcTQg;dBD%4e3DB3`2" x="170" y="70"><field name="data-x">0</field><field name="data-y">0</field><field name="data-z">0</field><field name="data-rotate-x">0</field><field name="data-rotate-y">0</field><field name="data-rotate-z">0</field><field name="data-scale">1</field><field name="font-family">Arial</field><statement name="start"><block type="impress_block" id="G90{BxlxPIGH,I-8b4_E"><statement name="block"><block type="impress_inline" id="ND?`32~S^,t`Sej(ri)?"><field name="text">这只是个示例</field><field name="font-size">90</field><field name="color">#000000</field><field name="font-weight">FALSE</field><field name="font-style">FALSE</field></block></statement></block></statement><next><block type="impress_step_slide" id="HFLWjhg%R]Jr%;]xhxze"><field name="data-x">1500</field><field name="data-y">0</field><field name="data-z">0</field><field name="data-rotate-x">0</field><field name="data-rotate-y">0</field><field name="data-rotate-z">0</field><field name="data-scale">1</field><field name="font-family">Arial</field><statement name="step"><block type="impress_inline" id="ka-]GC*`+|Z-7rtM(cz@"><field name="text">这是impress!!</field><field name="font-size">60</field><field name="color">#000000</field><field name="font-weight">FALSE</field><field name="font-style">FALSE</field></block></statement><next><block type="impress_step_slide" id="-DHPcb!FpUmgGgg!;^d["><field name="data-x">2500</field><field name="data-y">0</field><field name="data-z">0</field><field name="data-rotate-x">0</field><field name="data-rotate-y">0</field><field name="data-rotate-z">0</field><field name="data-scale">1</field><field name="font-family">Arial</field><statement name="step"><block type="impress_inline" id="GT_}J|?{{u`9S0Sc4?{a"><field name="text">右边那是blockly！！</field><field name="font-size">60</field><field name="color">#000000</field><field name="font-weight">FALSE</field><field name="font-style">FALSE</field></block></statement><next><block type="impress_step" id="W]zIk$Kx~+tJM[ZXuYgt"><field name="data-x">1500</field><field name="data-y">2000</field><field name="data-z">0</field><field name="data-rotate-x">60</field><field name="data-rotate-y">0</field><field name="data-rotate-z">0</field><field name="data-scale">1</field><field name="font-family">Arial</field><statement name="step"><block type="impress_inline" id="U8++#QR)Z#7dYv66@qXv"><field name="text">然后放到一起</field><field name="font-size">60</field><field name="color">#000000</field><field name="font-weight">FALSE</field><field name="font-style">FALSE</field></block></statement><next><block type="impress_step" id="1%p}KWWydx*tz*|VfgT."><field name="data-x">1000</field><field name="data-y">1000</field><field name="data-z">0</field><field name="data-rotate-x">60</field><field name="data-rotate-y">0</field><field name="data-rotate-z">60</field><field name="data-scale">1</field><field name="font-family">Arial</field><statement name="step"><block type="impress_inline" id="O0|rr:%m::Brb}X%uN?2"><field name="text">看起来还不错吧！</field><field name="font-size">60</field><field name="color">#000000</field><field name="font-weight">FALSE</field><field name="font-style">FALSE</field></block></statement><next><block type="impress_step" id="VzpeU:s:j5F-6]tuq4SV"><field name="data-x">0</field><field name="data-y">1500</field><field name="data-z">0</field><field name="data-rotate-x">0</field><field name="data-rotate-y">0</field><field name="data-rotate-z">60</field><field name="data-scale">1</field><field name="font-family">Arial</field><statement name="step"><block type="impress_block" id="DlFSRhX%q,*iR;xuX,]9"><statement name="block"><block type="impress_image" id="G3iagvY8+4sX,iuM5j-["><field name="src">https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqsH8kgkz98IPNki0OGAqU3sxW4xyiBLyyt9WqaGeETC4qMZes</field><field name="width">300</field><field name="height">300</field><next><block type="impress_inline" id="n)1#i1fMc?Srw.6lpUKT"><field name="text">乖巧</field><field name="font-size">60</field><field name="color">#000000</field><field name="font-weight">FALSE</field><field name="font-style">FALSE</field></block></next></block></statement></block></statement><next><block type="impress_step_overview" id="%#C#sUC!.`MYlrBnV[of"><field name="data-x">1000</field><field name="data-y">1000</field><field name="data-z">0</field><field name="data-rotate-x">0</field><field name="data-rotate-y">0</field><field name="data-rotate-z">0</field><field name="data-scale">3</field></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>'
+            var xml = Blockly.Xml.textToDom(xml_text);
+            Blockly.Xml.domToWorkspace(xml, workspace);
+            run()
+        }
+    
+
+        //点击事件部分
+        $('#pull div.pull').click( () => {
+            if (pulled) {
+                $('#pull div.pull').html("收起") 
+                $('#slide').animate({right:'0'});
+                
+            } else {
+                $('#pull div.pull').html("拉出") 
+                $('#slide').animate({right:'-60%'});
+            }
+            pulled = !pulled
+        })
+        $('#pull div.run').click( () => {
+            run()
+        })
+        $('#pull div.export').click( () => {
+            var xml = Blockly.Xml.workspaceToDom(workspace);
+            var xml_text = Blockly.Xml.domToText(xml);
+            console.log('------------------------**复制以下代码\n'+xml_text+'\n------------------------**复制以上代码')
+            alert('F12进入控制台，复制console选项卡中的代码并保存')
+        })
+        $('#pull div.import').click( () => { 
+            var xml_text = prompt("粘入导出的代码","")
+            var xml = Blockly.Xml.textToDom(xml_text);
+            Blockly.Xml.domToWorkspace(xml, workspace);
+        })
+
+        //设置颜色
+        $('body').css("background", "radial-gradient(#F0F0F0, #BEBEBE)")
+        $('#color1').bind('change', getColor1)
+        $('#color2').bind('change', getColor2)
+        function getColor1 (event) {
+            color1 = event.target.value
+            $('body').css("background", "radial-gradient("+ color1 +", "+ color2 +")")
+        }
+        function getColor2 (event) {
+            color2 = event.target.value
+            $('body').css("background", "radial-gradient("+ color1 +", "+ color2 +")")
+        }
+        //节流函数
+        function throttle(fn, delay) {
+            clearTimeout(timer)
+            timer = setTimeout(function(){
+                fn()
+            },delay);
+        }
+
+         //运行函数
+        function run() {
+            if (runed) window.location.reload()
+            var code = Blockly.JavaScript.workspaceToCode(workspace);
+            var xml = Blockly.Xml.workspaceToDom(workspace);
+            var xml_text = Blockly.Xml.domToPrettyText(xml);
+            localStorage.setItem('xml_text', xml_text);
+            $('#impress').html(code)
+            throttle(function() { 
+                impress().init()
+            }, 1000)
+            runed = true;
+        }
+    </script>
+</html>
