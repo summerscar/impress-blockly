@@ -1,0 +1,199 @@
+<!doctype html>
+<html>
+    <head>
+        <title>darren - Impress demo</title>
+        <meta charset="utf-8" />
+        <link href="http://impress.github.io/impress.js/css/impress-demo.css" rel="stylesheet" />
+        <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+        <script src="./blockly_compressed.js"></script>
+        <script src="./blocks_compressed.js"></script>
+        <script src="./javascript_compressed.js"></script>
+        <script src="./custom_blocks.js"></script>
+        <script src="./custom_blockly.js"></script>
+        <script src="./msg/js/zh-hans.js"></script>
+        <style>
+            html,body {
+                height: 100%;
+                width: 100%
+            }
+            #slide {
+                height: 100%;
+                position: fixed;
+                width: 50%;
+                right: 0;
+                top: 0;
+                background-color: #66ccff;
+                pointer-events: auto;
+            }
+            #slide div#pull {
+                position: absolute;
+                height: 200px;
+                width: 50px;
+                border: 1px solid red;
+                top: 50%;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                align-content:space-around;
+                transform: translate(-100%,-50%)
+            }
+            #pull div {
+                color:white;
+                padding:3px;
+                cursor: pointer;
+            }
+            #colorselect {
+                pointer-events: auto;
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+                z-index: 999
+            }
+        </style>
+    </head>
+    <body>
+        <div class="impress-not-supported">
+            <div class="fallback-message">
+                <p>你的浏览器<b>不支持</b> impress.js, 所以当前展示的是简化版。</p>
+                <p>为了获得更好的体验，请使用最新的 <b>Chrome</b>, <b>Safari</b> 或者 <b>Firefox</b> 浏览器。</p>
+            </div>
+        </div>
+        <div id="impress"></div>
+        <div id="slide">
+            <div id="pull">
+                <div class="pull" style="background-color:#66ccff;">
+                    收回        
+                </div>
+                <div class="run" style="background-color:#66ccff;">
+                    运行        
+                </div>
+                <div style="background-color:#66ccff;">
+                    收回        
+                </div>
+            </div>
+        </div>
+        <div id="colorselect">
+            <!-- <label for="color1">color1</label> -->
+            <input type='color' id="color1" value="#F0F0F0"/>
+            <!-- <label for="color1">color2</label> -->
+            <input type='color' id="color2" value="#BEBEBE"/>
+        </div>
+    </body>
+    <xml id="toolbox" style="display: none">
+        <block type="controls_if"></block>
+        <block type="controls_repeat_ext"></block>
+        <block type="logic_compare"></block>
+        <block type="math_number"></block>
+        <block type="math_arithmetic"></block>
+        <block type="text"></block>
+        <block type="text_print"></block>
+        <block type="hello"></block>
+    </xml>
+    <script src="http://impress.github.io/impress.js/js/impress.js"></script>
+    <script>
+        let pulled = false
+        var timer = null;
+        let runed = false
+        let color1 = '#F0F0F0'
+        let color2 = '#BEBEBE'
+
+        var workspace = Blockly.inject('slide',{
+                toolbox: document.getElementById('toolbox'),
+                grid:
+                    {spacing: 20,
+                        length: 3,
+                        colour: '#ccc',
+                        snap: true},
+                zoom:
+                    {controls: true,
+                        startScale: 1.0,
+                        maxScale: 3,
+                        minScale: 0.3,
+                        scaleSpeed: 1.2},
+                trashcan: true});
+        
+        if (localStorage.getItem("xml_text")) {
+            var xml_text = localStorage.getItem("xml_text")
+            var xml = Blockly.Xml.textToDom(xml_text);
+            Blockly.Xml.domToWorkspace(xml, workspace);
+            run()
+        }
+        function myUpdateFunction(event) {
+            var code = Blockly.JavaScript.workspaceToCode(workspace);
+            console.log(code)
+        }
+        $('#pull div.pull').click( () => {
+            if (pulled) {
+                $('#slide').animate({right:'0'});
+            } else {
+                $('#slide').animate({right:'-50%'});
+            }
+            pulled = !pulled
+        })
+        $('#pull div.run').click( () => {
+            run()
+        })
+
+        
+        $('body').css("background", "radial-gradient(#F0F0F0, #BEBEBE)")
+        $('#color1').bind('change', getColor1)
+        $('#color2').bind('change', getColor2)
+        function getColor1 (event) {
+            color1 = event.target.value
+            $('body').css("background", "radial-gradient("+ color1 +", "+ color2 +")")
+        }
+        function getColor2 (event) {
+            color2 = event.target.value
+            $('body').css("background", "radial-gradient("+ color1 +", "+ color2 +")")
+        }
+        //节流函数
+        function throttle(fn, delay) {
+            clearTimeout(timer)
+            timer = setTimeout(function(){
+                fn()
+            },delay);
+        }
+
+         //运行函数
+        function run() {
+            if (runed) window.location.reload()
+            var code = Blockly.JavaScript.workspaceToCode(workspace);
+            var xml = Blockly.Xml.workspaceToDom(workspace);
+            var xml_text = Blockly.Xml.domToPrettyText(xml);
+            console.log(xml_text)
+            localStorage.setItem('xml_text', xml_text);
+            $('#impress').html(code)
+            throttle(function() { 
+                impress().init()
+            }, 1000)
+            runed = true;
+        }
+
+        let innerHTML = 
+        `
+        <div class="step" data-x="0" data-y="0">
+            Darren code - [标题]
+        </div>
+        <div class="step" data-x="500" data-y="0">
+            This is slide 2
+        </div>
+        <div class="step" data-x="500" data-y="-400">
+            This is slide 3
+        </div>
+        <div class="step" data-x="500" data-y="-800" data-scale="0.5">
+            This is slide 4
+        </div>
+        <div class="step" data-x="0" data-y="-800" data-rotate="90">
+            This is slide 5
+        </div>
+        <div class="step" data-x="-1200" data-y="0" data-rotate-x="30" data-rotate-y="-30" data-rotate-z="90" data-scale="4">
+            This is slide 6
+        </div>
+        <!-- darren code -->
+        <div id="overview" class="step" data-x="-200" data-y="-500" data-scale="3"></div>
+        `
+
+    
+      
+    </script>
+</html>
