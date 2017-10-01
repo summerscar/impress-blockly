@@ -102,7 +102,9 @@ Blockly.Blocks['impress_step_slide'] = {
 Blockly.Blocks['impress_block'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("行元素div");
+        .appendField("行元素div")
+        .appendField("对齐")
+        .appendField(new Blockly.FieldDropdown([["left","left"], ["center","center"], ["right","right"]]), "text-align");
     this.appendStatementInput("block")
         .setCheck(null);
     this.setPreviousStatement(true, null);
@@ -174,6 +176,30 @@ Blockly.Blocks['impress_step_overview'] = {
     this.setNextStatement(true, null);
     this.setColour(60);
  this.setTooltip("全局预览");
+ this.setHelpUrl("");
+  }
+};
+
+
+Blockly.Blocks['impress_inline_a'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("超链接")
+        .appendField("文本")
+        .appendField(new Blockly.FieldTextInput("百度"), "text")
+        .appendField("链接")
+        .appendField(new Blockly.FieldTextInput("https://www.baidu.com/"), "href")
+        .appendField(" 字体大小")
+        .appendField(new Blockly.FieldNumber(50, 12), "font-size")
+        .appendField(new Blockly.FieldColour("#000000"), "color")
+        .appendField("加粗")
+        .appendField(new Blockly.FieldCheckbox("FALSE"), "font-weight")
+        .appendField("斜体")
+        .appendField(new Blockly.FieldCheckbox("FALSE"), "font-style");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(210);
+ this.setTooltip("行内元素a");
  this.setHelpUrl("");
   }
 };

@@ -81,10 +81,11 @@ Blockly.JavaScript['impress_step_slide'] = function(block) {
 
 Blockly.JavaScript['impress_block'] = function(block) {
   var statements_block = Blockly.JavaScript.statementToCode(block, 'block');
+  var dropdown_text_align = block.getFieldValue('text-align');
   // TODO: Assemble JavaScript into code variable.
   var code = 
   `
-  <div style="padding:50px 0;">
+  <div style="padding:40px 0;text-align:${dropdown_text_align}">
   ${statements_block}
   </div>
   `;
@@ -134,6 +135,24 @@ Blockly.JavaScript['impress_step_overview'] = function(block) {
   <div id="overview" class="step" data-x="${number_data_x}" data-y="${number_data_y}" data-z="${number_data_z}"
   data-rotate-x="${number_data_rotate_x}" data-rotate-y="${number_data_rotate_y}" data-rotate-z="${number_data_rotate_z}"
   data-scale="${number_data_scale}"></div>
+  `;
+  return code;
+};
+
+Blockly.JavaScript['impress_inline_a'] = function(block) {
+  var text_text = block.getFieldValue('text');
+  var text_href = block.getFieldValue('href');
+  var number_font_size = block.getFieldValue('font-size');
+  var colour_color = block.getFieldValue('color');
+  var checkbox_font_weight = block.getFieldValue('font-weight') == 'TRUE';
+  var checkbox_font_style = block.getFieldValue('font-style') == 'TRUE';
+  // TODO: Assemble JavaScript into code variable.
+  var code = 
+  `
+  <a href="${text_href}" style="color:${colour_color};font-size:${number_font_size+'px'};
+  font-weight:${checkbox_font_weight ? 'bold' : 'normal'};font-style:${checkbox_font_style ? 'italic' : 'normal'}">
+  ${text_text}
+  </a>
   `;
   return code;
 };
