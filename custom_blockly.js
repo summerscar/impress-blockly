@@ -156,3 +156,16 @@ Blockly.JavaScript['impress_inline_a'] = function(block) {
   `;
   return code;
 };
+
+Blockly.JavaScript['impress_video'] = function(block) {
+  var text_src = block.getFieldValue('src');
+  var dropdown_text_align = block.getFieldValue('text-align');
+  // TODO: Assemble JavaScript into code variable.
+  var code = 
+  `
+  <p align="${dropdown_text_align}">
+  <video src="${text_src}" controls="controls">
+  </p>
+  `;
+  return code;
+};

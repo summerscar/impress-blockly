@@ -203,3 +203,19 @@ Blockly.Blocks['impress_inline_a'] = {
  this.setHelpUrl("");
   }
 };
+
+Blockly.Blocks['impress_video'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("视频")
+        .appendField("链接")
+        .appendField(new Blockly.FieldTextInput("./video/video.mp4"), "src")
+        .appendField("对齐")
+        .appendField(new Blockly.FieldDropdown([["left","left"], ["center","center"], ["right","right"]]), "text-align");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(0);
+ this.setTooltip("video");
+ this.setHelpUrl("");
+  }
+};
