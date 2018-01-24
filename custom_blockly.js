@@ -85,7 +85,7 @@ Blockly.JavaScript['impress_block'] = function(block) {
   // TODO: Assemble JavaScript into code variable.
   var code = 
   `
-  <div style="padding:40px 0;text-align:${dropdown_text_align}">
+  <div style="padding:0px 0;text-align:${dropdown_text_align}">
   ${statements_block}
   </div>
   `;

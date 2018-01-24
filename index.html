@@ -216,7 +216,8 @@
         //设置颜色
         
         $('body').css("background", "radial-gradient(" + color1 + "," + color2 + ")")
-
+        $('#color1').val(color1)
+        $('#color2').val(color2)
         $('#color1').bind('change', getColor1)
         $('#color2').bind('change', getColor2)
         $('#colorResetBtn').bind('click', function() {
