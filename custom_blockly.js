@@ -92,6 +92,23 @@ Blockly.JavaScript['impress_block'] = function(block) {
   return code;
 };
 
+Blockly.JavaScript['impress_p'] = function (block) {
+  var text_text = block.getFieldValue('text');
+  var number_font_size = block.getFieldValue('font-size');
+  var colour_color = block.getFieldValue('color');
+  var checkbox_font_weight = block.getFieldValue('font-weight') == 'TRUE';
+  var checkbox_font_style = block.getFieldValue('font-style') == 'TRUE';
+  // TODO: Assemble JavaScript into code variable.
+  var code =
+    `
+  <p style="color:${colour_color};font-size:${number_font_size + 'px'};
+  font-weight:${checkbox_font_weight ? 'bold' : 'normal'};font-style:${checkbox_font_style ? 'italic' : 'normal'}">
+  ${text_text}
+  </p>
+  `;
+  return code;
+};
+
 Blockly.JavaScript['impress_inline'] = function(block) {
   var text_text = block.getFieldValue('text');
   var number_font_size = block.getFieldValue('font-size');

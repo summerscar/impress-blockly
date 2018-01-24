@@ -115,6 +115,27 @@ Blockly.Blocks['impress_block'] = {
   }
 };
 
+Blockly.Blocks['impress_p'] = {
+  init: function () {
+    this.appendDummyInput()
+      .appendField("行元素p")
+      .appendField("文本")
+      .appendField(new Blockly.FieldTextInput("示例文本"), "text")
+      .appendField(" 字体大小")
+      .appendField(new Blockly.FieldNumber(60, 12), "font-size")
+      .appendField(new Blockly.FieldColour("#000000"), "color")
+      .appendField("加粗")
+      .appendField(new Blockly.FieldCheckbox("FALSE"), "font-weight")
+      .appendField("斜体")
+      .appendField(new Blockly.FieldCheckbox("FALSE"), "font-style");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(90);
+    this.setTooltip("行元素p");
+    this.setHelpUrl("");
+  }
+};
+
 Blockly.Blocks['impress_inline'] = {
   init: function() {
     this.appendDummyInput()
