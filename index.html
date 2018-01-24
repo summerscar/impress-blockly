@@ -190,11 +190,24 @@
         $('#pull div.export').click( () => {
             var xml = Blockly.Xml.workspaceToDom(workspace);
             var xml_text = Blockly.Xml.domToText(xml);
-            console.log('------------------------**复制以下代码\n'+xml_text+'\n------------------------**复制以上代码')
-            alert('F12进入控制台，复制console选项卡中的代码并保存')
+
+            const saveLink = document.createElement('a');
+            document.body.appendChild(saveLink);
+
+            const data = new Blob([xml_text], { type: 'text' });
+            const url = window.URL.createObjectURL(data);
+            saveLink.href = url;
+
+            // File name: project-DATE-TIME
+            const date = new Date();
+            const timestamp = `${date.toLocaleDateString()}-${date.toLocaleTimeString()}`;
+            saveLink.download = `project-${timestamp}.txt`;
+            saveLink.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(saveLink);
         })
         $('#pull div.import').click( () => { 
-            var xml_text = prompt("粘入导出的代码","")
+            var xml_text = prompt("粘入导出的xml","")
             var xml = Blockly.Xml.textToDom(xml_text);
             Blockly.Xml.domToWorkspace(xml, workspace);
         })
