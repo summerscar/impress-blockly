@@ -110,6 +110,7 @@
             <input type='color' id="color1" value="#F0F0F0"/>
             <!-- <label for="color1">color2</label> -->
             <input type='color' id="color2" value="#BEBEBE"/>
+            <button type="button" id="colorResetBtn">恢复</button>
         </div>
     </body>
     <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
@@ -138,8 +139,8 @@
         let pulled = true
         var timer = null;
         let runed = false
-        let color1 = '#F0F0F0'
-        let color2 = '#BEBEBE'
+        let color1 = localStorage.getItem('color1') || '#F0F0F0'
+        let color2 = localStorage.getItem('color2') || '#BEBEBE'
 
         //blockly初始化
         var workspace = Blockly.inject('slide',{
@@ -213,16 +214,25 @@
         })
 
         //设置颜色
-        $('body').css("background", "radial-gradient(#F0F0F0, #BEBEBE)")
+        
+        $('body').css("background", "radial-gradient(" + color1 + "," + color2 + ")")
+
         $('#color1').bind('change', getColor1)
         $('#color2').bind('change', getColor2)
+        $('#colorResetBtn').bind('click', function() {
+            $('body').css("background", "radial-gradient(#F0F0F0, #BEBEBE)")
+            localStorage.setItem("color1", '#F0F0F0')
+            localStorage.setItem("color2", '#BEBEBE')
+        })
         function getColor1 (event) {
             color1 = event.target.value
             $('body').css("background", "radial-gradient("+ color1 +", "+ color2 +")")
+            localStorage.setItem("color1", color1)
         }
         function getColor2 (event) {
             color2 = event.target.value
             $('body').css("background", "radial-gradient("+ color1 +", "+ color2 +")")
+            localStorage.setItem("color2", color2)
         }
         //节流函数
         function throttle(fn, delay) {
